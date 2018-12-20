@@ -6,7 +6,7 @@ from music21 import instrument, note, stream, chord
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
-from keras.layers import LSTM
+from keras.layers import CuDNNLSTM
 from keras.layers import Activation
 
 def generate():
@@ -51,15 +51,15 @@ def prepare_sequences(notes, pitchnames, n_vocab):
 def create_network(network_input, n_vocab):
     """ create the structure of the neural network """
     model = Sequential()
-    model.add(LSTM(
+    model.add(CuDNNLSTM(
         512,
         input_shape=(network_input.shape[1], network_input.shape[2]),
         return_sequences=True
     ))
     model.add(Dropout(0.3))
-    model.add(LSTM(512, return_sequences=True))
+    model.add(CuDNNLSTM(512, return_sequences=True))
     model.add(Dropout(0.3))
-    model.add(LSTM(512))
+    model.add(CuDNNLSTM(512))
     model.add(Dense(256))
     model.add(Dropout(0.3))
     model.add(Dense(n_vocab))
